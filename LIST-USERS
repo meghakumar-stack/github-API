@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# --- Configuration ---
+GITHUB_TOKEN="your_github_token_here"
+OWNER="meghakumar-stack"     
+REPO="github-API"    
+
+# --- API Endpoint ---
+API_URL="https://api.github.com/repos/$OWNER/$REPO/collaborators"
+
+# --- Fetch Collaborators ---
+echo "Fetching list of collaborators for $OWNER/$REPO..."
+
+curl -s -H "Authorization: token $GITHUB_TOKEN" \
+     -H "Accept: application/vnd.github+json" \
+     "$API_URL?per_page=100" | \
+jq -r '.[] | "\(.login) (\(.permissions | to_entries[] | select(.value == true) | .key))"'
