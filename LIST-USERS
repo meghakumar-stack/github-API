@@ -1,17 +1,15 @@
 #!/bin/bash
 
 # --- Configuration ---
-GITHUB_TOKEN=""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
-OWNER="meghakumar-stack"     
-REPO="github-API"    
+GITHUB_USER="meghakumar-stack"
+GITHUB_TOKEN="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"  
 
-# --- API Endpoint ---
-API_URL="https://api.github.com/repos/$OWNER/$REPO/collaborators"
+# --- API URL ---
+API_URL="https://api.github.com/users/$GITHUB_USER/repos?per_page=100"
 
-# --- Fetch Collaborators ---
-echo "Fetching list of collaborators for $OWNER/$REPO..."
+# --- Fetch and Count Repositories ---
+REPO_COUNT=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                   -H "Accept: application/vnd.github+json" \
+                   "$API_URL" | jq length)
 
-curl -s -H "Authorization: token $GITHUB_TOKEN" \
-     -H "Accept: application/vnd.github+json" \
-     "$API_URL?per_page=100" | \
-jq -r '.[] | "\(.login) (\(.permissions | to_entries[] | select(.value == true) | .key))"'
+echo "User '$GITHUB_USER' has $REPO_COUNT public repositories."
